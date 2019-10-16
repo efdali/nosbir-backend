@@ -78,7 +78,8 @@ if($_POST){
                     uye_sifre=?,
                     uye_eposta=?
                     uye_ip=?,
-                    uye_durum=?");
+                    uye_durum=?,
+                    uye_rutbe=?");
 
                     $ekle->execute(array(
                         $kadi,
@@ -86,9 +87,10 @@ if($_POST){
                         $sifre,
                         $eposta,
                         $ip,
+                        1,
                         1));
 
-                    $decoded = JWT::decode($kadi,$isim,$eposta,$rutbe,$id array('HS256'));
+                    $decoded = JWT::decode($kadi,$isim,$eposta,$rutbe,$id,array('HS256'));
                     //[Efdal!Decoded true,false diye deger donduruyor mu?]
                     if($decoded){
                         http_response_code(200);
