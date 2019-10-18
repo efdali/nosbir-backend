@@ -1,7 +1,7 @@
 <?php
 
 $host="localhost";
-$db="nosbir_deneme";
+$db="nosbir";
 $username="root";
 $pass="";
 
@@ -17,8 +17,5 @@ try{
     die();
 
 }
-
-
-
 
 ?>

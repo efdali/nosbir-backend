@@ -3,7 +3,6 @@ require_once("../sistem/ayar.php");
 
 
 if($_POST){
-
         //uye ip bul.
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -22,86 +21,76 @@ if($_POST){
 
         if(!$isim || !$sifre || !$sifretekrar || !$eposta ){
             echo json_encode(array(
-                "message" => "Lutfen tum alanları doldurun"
+                "mesaj" => "Lutfen tum alanları doldurun"
                 
             ));
         }else if(is_numeric($isim)){
             echo json_encode(array(
-                "message" => "Kullanıcı adı sadece sayılardan oluşamaz"
+                "mesaj" => "Kullanıcı adı sadece sayılardan oluşamaz"
                 
             ));
-        }else if(strlen($isim)<=7 || strlen($isim)>=30){
+        }else if(strlen($isim)>=15){
             echo json_encode(array(
-                "message" => "Lutfen kullanıcı adınızı 7 karakterden küçük ve 30 karakterden büyük yapmayın"
+                "mesaj" => "Lutfen kullanıcı adınızı 15 karakterden büyük yapmayın"
                 
             ));
         }else if($sifre != $sifretekrar){
             echo json_encode(array(
-                "message" => "Sifreler birbiriyle uyuşmuyor"
+                "mesaj" => "Sifreler birbiriyle uyuşmuyor"
                 
             ));
         }else if(!filter_var($eposta,FILTER_VALIDATE_EMAIL)){
             echo json_encode(array(
-                "message" => "Lutfen gecerli bir eposta giriniz"
+                "mesaj" => "Lutfen gecerli bir eposta giriniz"
                 
-            ));
+            )); 
         }else{
             //aynı isimle kayıtlı uye var mı?
-            $uyetekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi=?");
-            $uyetekrar->execute(array(
-                $kadi
-            ));
+            $uyetekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi=:kadi limit 0,1");
+            $uyetekrar->bindParam(":kadi",$kadi);
+            $uyetekrar->execute();
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
             if($row->rowCount()){
                 echo json_encode(array(
-                    "message" =>"Bu kullanıcı adını kullanamazsınız"
-                
+                    "mesaj" =>"Bu kullanıcı adını kullanamazsınız"
                 ));
             }else{
-                //ayni ip ile kayıtlı sayısı=?
-                $iptekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_ip=?");
-                $iptekrar->execute(array(
-                    $ip
-                ));
+                $iptekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_ip= :ip");
+                $iptekrar->bindParam(":id",$ip);
+                $iptekrar->execute();
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
                 if($row->rowCount()>3){
                     echo json_encode(array(
-                        "message" => "Aynı ip ile daha fazla hesap açamazsınız"
-                        
+                        "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız"
                     ));
                 }else{
 
-                    
                     $ekle=$db->prepare("INSERT INTO nosbir SET
-                    uye_kadi=?,
-                    uye_isim,
-                    uye_sifre=?,
-                    uye_eposta=?
-                    uye_ip=?,
-                    uye_durum=?,
-                    uye_rutbe=?");
+                    uye_kadi=:kadi,
+                    uye_isim = :isim,
+                    uye_sifre= :sifre,
+                    uye_eposta= :mail,
+                    uye_ip= :ip,
+                    uye_durum= :durum,
+                    uye_rutbe= :rutbe");
 
-                    $ekle->execute(array(
-                        $kadi,
-                        $isim,
-                        $sifre,
-                        $eposta,
-                        $ip,
-                        1,
-                        1));
+                    $ekle->bindParam(":kadi",$kadi);
+                    $ekle->bindParam(":isim",$isim);
+                    $ekle->bindParam(":sifre",$sifre);
+                    $ekle->bindParam(":mail",$eposta);
+                    $ekle->bindParam(":ip",$ip);
+                    $ekle->bindParam(":durum",1);
+                    $ekle->bindParam(":rutbe",1);
 
-                    $decoded = JWT::decode($kadi,$isim,$eposta,$rutbe,$id,array('HS256'));
-                    //[Efdal!Decoded true,false diye deger donduruyor mu?]
-                    if($decoded){
-                        http_response_code(200);
+                    if($ekle->execute())
+                       
                         echo json_encode(array(
-                            "message" => "Basarıyla Kayıt edildi",
-                            "data" => $decoded->data
+                            "mesaj" => "Basarıyla Kayıt edildi",
                         ));
 
                     }else{
                         echo json_encode(array(
-                            "message"=>"Veritabanına Kayıt Edilirken Bir Sorun Oluştu."
+                            "mesaj"=>"Veritabanına Kayıt Edilirken Bir Sorun Oluştu."
                         ))
                     }
                     

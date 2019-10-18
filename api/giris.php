@@ -1,6 +1,6 @@
 <?php
 
-require_once("../sistem.php");
+require_once("../sistem/ayar.php");
 use \Firebase\JWT\JWT;
 
 if($_POST){
@@ -9,58 +9,68 @@ if($_POST){
 
     if(!$kadi || !$sifre){
         echo json_encode(array(
-            "message" => "Kullanıcı Adı veya sifre bos bırakılamaz"
-            
+            "mesaj" => "Kullanıcı Adı veya sifre bos bırakılamaz"
         ));
     }else{
-
-        $giris=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi=? AND uye_sifre=?");
-        $giris->execute(array(
-            $kadi,
-            $sifre
-        ));
+        $giris=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi= :kadi AND uye_sifre= :sifre");
+        $giris->bindParam(":kadi",$kadi);
+        $giris->bindParam(":sifre",$sifre);
+        $giris->execute();
         $row=$giris->fetch(PDO::FETCH_ASSOC);
         $kontrol=$row->rowCount();
-
-        if($row["uye_durum"]==2){
-            echo json_encode(array(
-                "message" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz"
-                
-            ));
-        }else{
-
         if($kontrol){
-            $kadi=$row["uye_kadi"];
-            $isim=$row["uye_isim"];
-            $eposta=$row["uye_eposta"];
-            $rutbe=$row["uye_rutbe"];
-            $id=$row["uye_id"];
-            $decoded = JWT::decode($kadi,$isim,$eposta,$rutbe,$id array('HS256'));
+            if($row["uye_durum"]==2){
+                echo json_encode(array(
+                    "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz"
+                ));
+            }else{
             
-            
-            echo json_encode(array(
-                "message" => "Erişim Sağlandı.",
-                "data" => $decoded->data
-            ));
+                $kadi=$row["uye_kadi"];
+                $eposta=$row["uye_eposta"];
+                $rutbe=$row["uye_rutbe"];
+                $id=$row["uye_id"];
+                
+                $secret_key="nosbirciler";
+                $issuer_claim = "nosbir.com"; // this can be the servername
+                $audience_claim = "THE_AUDIENCE";
+                $issuedat_claim = time(); // issued at
+                $notbefore_claim = $issuedat_claim + 10; //not before in seconds
+                $expire_claim = $issuedat_claim + 120; // token süresi
+                $token = array(
+                    "iss" => $issuer_claim,
+                    "aud" => $audience_claim,
+                    "iat" => $issuedat_claim,
+                    "nbf" => $notbefore_claim,
+                    "exp" => $expire_claim,
+                    "data" => array(
+                        "id" => $id,
+                        "kadi"=>$kadi,
+                        "rutbe"=>$rutbe,
+                        "mail" => $eposta
+                    )
+                );
+
+                $jwt=JWT::encode($token,$secret_key);
+
+                echo json_encode(array(
+                    "mesaj"=> "Giriş Başarılı",
+                    "token" => $token,
+                    "suresi"=>$expire_claim 
+                ));
+
+            }
 
         }else{
 
-            
- 
-        
             echo json_encode(array(
-            "message" => "Kullanıcı Bilgileri Bulunamadı"
-            
-        ));
+                "mesaj" => "Kullanıcı Bilgileri Bulunamadı"
+            ));
             
         }
+    
 
     }
 }
-
-}
-
-
 
 
 
