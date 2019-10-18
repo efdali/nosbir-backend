@@ -4,12 +4,14 @@ require_once("../sistem/ayar.php");
 use \Firebase\JWT\JWT;
 
 if($_POST){
-    $kadi=@strip_tags(trim($_POST["kadi"]);
-    $sifre=@md5(strip_tags(trim($_POST["sifre"])));
+    $kadi=@strip_tags(trim($_POST["kadi"]));
+    $sifre=@strip_tags(trim($_POST["sifre"]));
+    
 
     if(!$kadi || !$sifre){
         echo json_encode(array(
-            "mesaj" => "Kullanıcı Adı veya sifre bos bırakılamaz"
+            "mesaj" => "Kullanıcı Adı veya sifre bos bırakılamaz",
+            "durum" => 0
         ));
     }else{
         $giris=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi= :kadi AND uye_sifre= :sifre");
@@ -21,7 +23,8 @@ if($_POST){
         if($kontrol){
             if($row["uye_durum"]==2){
                 echo json_encode(array(
-                    "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz"
+                    "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz",
+                    "durum" => 0
                 ));
             }else{
             
@@ -63,7 +66,8 @@ if($_POST){
         }else{
 
             echo json_encode(array(
-                "mesaj" => "Kullanıcı Bilgileri Bulunamadı"
+                "mesaj" => "Kullanıcı Bilgileri Bulunamadı",
+                "durum" => 0
             ));
             
         }

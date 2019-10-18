@@ -2,7 +2,7 @@
 
 require "vendor/autoload.php";
 use \Firebase\JWT\JWT;
-public class TokenDogrula{
+class TokenDogrula{
 
     public function dogrula(){
         
@@ -14,7 +14,7 @@ public class TokenDogrula{
             try{
                  $decoded=JWT::decode($token,$secret_key,array("HS256"));
                  return json_encode(array(
-                     "durum"=>1
+                     "durum"=>1,
                      "decoded"=>$decoded
                  ));
             }catch (Exception $e){
@@ -25,7 +25,7 @@ public class TokenDogrula{
          }else{
              http_response_code(401);
              return json_encode(array(
-                 "durum"=>0,         
+                 "durum"=>0       
              ));
          }
         

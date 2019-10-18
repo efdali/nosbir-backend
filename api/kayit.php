@@ -61,7 +61,8 @@ if($_POST){
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
                 if($row->rowCount()>3){
                     echo json_encode(array(
-                        "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız"
+                        "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız",
+                        "durum" => 0
                     ));
                 }else{
 
@@ -69,7 +70,7 @@ if($_POST){
                     uye_kadi=:kadi,
                     uye_isim = :isim,
                     uye_sifre= :sifre,
-                    uye_eposta= :mail,
+                    uye_eposta= :eposta,
                     uye_ip= :ip,
                     uye_durum= :durum,
                     uye_rutbe= :rutbe");
@@ -77,21 +78,24 @@ if($_POST){
                     $ekle->bindParam(":kadi",$kadi);
                     $ekle->bindParam(":isim",$isim);
                     $ekle->bindParam(":sifre",$sifre);
-                    $ekle->bindParam(":mail",$eposta);
+                    $ekle->bindParam(":eposta",$eposta);
                     $ekle->bindParam(":ip",$ip);
                     $ekle->bindParam(":durum",1);
                     $ekle->bindParam(":rutbe",1);
 
-                    if($ekle->execute())
+                    if($ekle->execute()){
                        
                         echo json_encode(array(
                             "mesaj" => "Basarıyla Kayıt edildi",
+                            "durum" => 1
+                            
                         ));
 
                     }else{
                         echo json_encode(array(
-                            "mesaj"=>"Veritabanına Kayıt Edilirken Bir Sorun Oluştu."
-                        ))
+                            "mesaj"=>"Veritabanına Kayıt Edilirken Bir Sorun Oluştu.",
+                            "durum" => 0
+                        ));
                     }
                     
             
