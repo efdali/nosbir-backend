@@ -1,11 +1,12 @@
 <?php
 
 require_once("../sistem/ayar.php");
+require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
 
 if($_POST){
     $kadi=@strip_tags(trim($_POST["kadi"]));
-    $sifre=@strip_tags(trim($_POST["sifre"]));
+    $sifre = @md5(strip_tags(trim($_POST["sifre"])));
     
 
     if(!$kadi || !$sifre){
@@ -14,24 +15,23 @@ if($_POST){
             "durum" => 0
         ));
     }else{
-        $giris=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi= :kadi AND uye_sifre= :sifre");
+        $giris = $db->prepare("SELECT * FROM kullanicilar WHERE kadi= :kadi AND sifre= :sifre");
         $giris->bindParam(":kadi",$kadi);
         $giris->bindParam(":sifre",$sifre);
         $giris->execute();
-        $row=$giris->fetch(PDO::FETCH_ASSOC);
-        $kontrol=$row->rowCount();
-        if($kontrol){
-            if($row["uye_durum"]==2){
+        if ($giris->rowCount()) {
+            $row = $giris->fetch(PDO::FETCH_ASSOC);
+            if ($row["durum"] == 2) {
                 echo json_encode(array(
                     "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz",
                     "durum" => 0
                 ));
             }else{
-            
-                $kadi=$row["uye_kadi"];
-                $eposta=$row["uye_eposta"];
-                $rutbe=$row["uye_rutbe"];
-                $id=$row["uye_id"];
+
+                $kadi = $row["kadi"];
+                $eposta = $row["eposta"];
+                $rutbe = $row["rutbe"];
+                $id = $row["id"];
                 
                 $secret_key="nosbirciler";
                 $issuer_claim = "nosbir.com"; // this can be the servername
@@ -57,7 +57,7 @@ if($_POST){
 
                 echo json_encode(array(
                     "mesaj"=> "Giriş Başarılı",
-                    "token" => $token,
+                    "token" => $jwt,
                     "suresi"=>$expire_claim 
                 ));
 

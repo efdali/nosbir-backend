@@ -46,42 +46,43 @@ if($_POST){
             )); 
         }else{
             //aynı isimle kayıtlı uye var mı?
-            $uyetekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_kadi=:kadi limit 0,1");
+            $uyetekrar = $db->prepare("SELECT * FROM kullanicilar WHERE kadi=:kadi limit 0,1");
             $uyetekrar->bindParam(":kadi",$kadi);
             $uyetekrar->execute();
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
-            if($row->rowCount()){
+            if ($uyetekrar->rowCount()) {
                 echo json_encode(array(
                     "mesaj" =>"Bu kullanıcı adını kullanamazsınız"
                 ));
             }else{
-                $iptekrar=$db->prepare("SELECT * FROM nosbir WHERE uye_ip= :ip");
-                $iptekrar->bindParam(":id",$ip);
+                $iptekrar = $db->prepare("SELECT * FROM kullanicilar WHERE ip= :ip");
+                $iptekrar->bindParam(":ip", $ip);
                 $iptekrar->execute();
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
-                if($row->rowCount()>3){
+                if ($iptekrar->rowCount() > 3) {
                     echo json_encode(array(
                         "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız",
                         "durum" => 0
                     ));
                 }else{
 
-                    $ekle=$db->prepare("INSERT INTO nosbir SET
-                    uye_kadi=:kadi,
-                    uye_isim = :isim,
-                    uye_sifre= :sifre,
-                    uye_eposta= :eposta,
-                    uye_ip= :ip,
-                    uye_durum= :durum,
-                    uye_rutbe= :rutbe");
-
+                    $ekle = $db->prepare("INSERT INTO kullanicilar SET
+                    kadi=:kadi,
+                    isim = :isim,
+                    sifre= :sifre,
+                    eposta= :eposta,
+                    ip= :ip,
+                    durum= :durum,
+                    rutbe= :rutbe");
+                    $durum = 1;
+                    $rutbe = 1;
                     $ekle->bindParam(":kadi",$kadi);
                     $ekle->bindParam(":isim",$isim);
                     $ekle->bindParam(":sifre",$sifre);
                     $ekle->bindParam(":eposta",$eposta);
                     $ekle->bindParam(":ip",$ip);
-                    $ekle->bindParam(":durum",1);
-                    $ekle->bindParam(":rutbe",1);
+                    $ekle->bindParam(":durum", $durum);
+                    $ekle->bindParam(":rutbe", $rutbe);
 
                     if($ekle->execute()){
                        
@@ -93,7 +94,7 @@ if($_POST){
 
                     }else{
                         echo json_encode(array(
-                            "mesaj"=>"Veritabanına Kayıt Edilirken Bir Sorun Oluştu.",
+                            "mesaj" => $ekle->errorInfo(),
                             "durum" => 0
                         ));
                     }
