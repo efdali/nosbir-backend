@@ -20,7 +20,13 @@ if($_POST){
             ));
         }else{
             $hata=$_FILES["resim"]["error"];
-            if($hata!=0){
+            if($hata!=0){$boyut=$_FILES["resim"]["size"];
+                if($boyut>(1024*1024*3)){
+                    echo json_encode(array(
+                        "mesaj" => "dosya boyutu 3mb dan büyük olamaz",
+                        "durum" => 0
+                    ));
+                }else{
                 $isim=$_FILES["resim"]["name"];
                 $tip=$_FILES["resim"]["type"];
                 $uzanti=explode('.',$isim);
@@ -31,6 +37,7 @@ if($_POST){
                         "durum" => 0
                     ));
                 }else{
+                    
                     $dosya=$_FILES["resim"]["tmp_name"];
                     copy($dosya,'resimler/'.$_FILES["resim"]["name"]);
                     
@@ -51,6 +58,7 @@ if($_POST){
                         ));
                     }
                 }
+            }
             }
 
         }
