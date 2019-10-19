@@ -12,31 +12,25 @@ if($_POST){
         $ip = $_SERVER['REMOTE_ADDR'];
         }
 
+        // TODO resim işlemleri
+
         $kadi=@strip_tags(trim($_POST["kadi"]));
-        $isim=@strip_tags(trim($_POST["isim"]));
         $sifre=@md5(strip_tags(trim($_POST["sifre"])));
-        $sifretekrar=@md5(strip_tags(trim($_POST["sifretekrar"])));
         $eposta=strip_tags(trim($_POST["eposta"]));
 
-
-        if(!$isim || !$sifre || !$sifretekrar || !$eposta ){
+        if(!kadi ||  !$sifre || !$eposta ){
             echo json_encode(array(
                 "mesaj" => "Lutfen tum alanları doldurun"
                 
             ));
-        }else if(is_numeric($isim)){
+        }else if(is_numeric($kadi)){
             echo json_encode(array(
                 "mesaj" => "Kullanıcı adı sadece sayılardan oluşamaz"
                 
             ));
-        }else if(strlen($isim)>=15){
+        }else if(strlen($kadi)>=15){
             echo json_encode(array(
                 "mesaj" => "Lutfen kullanıcı adınızı 15 karakterden büyük yapmayın"
-                
-            ));
-        }else if($sifre != $sifretekrar){
-            echo json_encode(array(
-                "mesaj" => "Sifreler birbiriyle uyuşmuyor"
                 
             ));
         }else if(!filter_var($eposta,FILTER_VALIDATE_EMAIL)){
@@ -45,8 +39,11 @@ if($_POST){
                 
             )); 
         }else{
+
+            // TODO aynı maille giriş var mı kontrol edilecek..
+
             //aynı isimle kayıtlı uye var mı?
-            $uyetekrar = $db->prepare("SELECT * FROM kullanicilar WHERE kadi=:kadi limit 0,1");
+            $uyetekrar = $db->prepare("SELECT * FROM uye WHERE kadi=:kadi limit 0,1");
             $uyetekrar->bindParam(":kadi",$kadi);
             $uyetekrar->execute();
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
@@ -55,7 +52,7 @@ if($_POST){
                     "mesaj" =>"Bu kullanıcı adını kullanamazsınız"
                 ));
             }else{
-                $iptekrar = $db->prepare("SELECT * FROM kullanicilar WHERE ip= :ip");
+                $iptekrar = $db->prepare("SELECT * FROM uye WHERE ip= :ip");
                 $iptekrar->bindParam(":ip", $ip);
                 $iptekrar->execute();
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
@@ -66,9 +63,8 @@ if($_POST){
                     ));
                 }else{
 
-                    $ekle = $db->prepare("INSERT INTO kullanicilar SET
+                    $ekle = $db->prepare("INSERT INTO uye SET
                     kadi=:kadi,
-                    isim = :isim,
                     sifre= :sifre,
                     eposta= :eposta,
                     ip= :ip,
@@ -77,7 +73,6 @@ if($_POST){
                     $durum = 1;
                     $rutbe = 1;
                     $ekle->bindParam(":kadi",$kadi);
-                    $ekle->bindParam(":isim",$isim);
                     $ekle->bindParam(":sifre",$sifre);
                     $ekle->bindParam(":eposta",$eposta);
                     $ekle->bindParam(":ip",$ip);

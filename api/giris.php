@@ -1,9 +1,7 @@
 <?php
-
 require_once("../sistem/ayar.php");
 require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
-
 if($_POST){
     $kadi=@strip_tags(trim($_POST["kadi"]));
     $sifre = @md5(strip_tags(trim($_POST["sifre"])));
@@ -15,12 +13,14 @@ if($_POST){
             "durum" => 0
         ));
     }else{
-        $giris = $db->prepare("SELECT * FROM kullanicilar WHERE kadi= :kadi AND sifre= :sifre");
+        $giris = $db->prepare("SELECT * FROM uye WHERE kadi= :kadi AND sifre= :sifre");
         $giris->bindParam(":kadi",$kadi);
         $giris->bindParam(":sifre",$sifre);
         $giris->execute();
+        $row = $giris->fetch(PDO::FETCH_ASSOC);
+
         if ($giris->rowCount()) {
-            $row = $giris->fetch(PDO::FETCH_ASSOC);
+
             if ($row["durum"] == 2) {
                 echo json_encode(array(
                     "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz",
