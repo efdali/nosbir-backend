@@ -14,41 +14,41 @@ if ($_POST) {
 
     $id=$token->{"token"}->{"data"}->{"id"}; // eğer token normal geldiyse token içinden üye id yi alıyoruz
     $baslik = strip_tags(trim($_POST["baslik"]));
-    $metin = strip_tags(trim($_POST["metin"]));
-    $grupId = strip_tags(trim($_POST["grupId"]));
+    $icerik = strip_tags(trim($_POST["icerik"]));
+    $toplulukId = strip_tags(trim($_POST["toplulukId"]));
 
 
-    if (!$baslik || !$metin || !$grupId) {
+    if (!$baslik || !$icerik || !$toplulukId) {
         echo json_encode(array(
             "mesaj" => "Lutfen bos kısım bırakmayın",
             "durum" => 0
         ));
     } else {
-        //grup kontrol-burayı ben mi yapcam.
-        $grup = $db->prepare("SELECT DISTINCT(grup_isim) FROM postlar");
+        
+        $grup = $db->prepare('select * from post p');
         $grup->execute();
 
         while ($row = $grup->fetchAll(PDO::FETCH_ASSOC)) {
-            if ($row["grupId"] == $grupId) {
+            if ($row["toplulukId"] == $toplulukId) {
 
             } else {
                 $ekle = $db->prepare("INSERT INTO postlar SET
-                post_baslik=:baslik,
-                post_metin=:metin,
-                post_grup_isim=:grup_isim,
-                post_ekleyen=:uye_id");
+                baslik=:baslik,
+                icerik=:icerik,
+                toplulukId=:toplulukId,
+                uyeId=:uyeId");
 
                 $ekle->bindParam(":baslik", $baslik);
-                $ekle->bindParam(":metin", $metin);
-                $ekle->bindParam(":grup_isim", $grupId);
-                $ekle->bindParam(":uye_id", $uye_id);//session nasıl alıyoruz.
+                $ekle->bindParam(":icerik", $icerik);
+                $ekle->bindParam(":toplulukId", $toplulukId);
+                $ekle->bindParam(":uyeId", $id);
 
                 $kontrol = $ekle->execute();
                 if ($kontrol) {
                     echo json_encode(array(
                         "mesaj" => "soru basarıyla eklendi",
                         "durum" => 1,
-                        //veri nasıl gondercem-bence gondermeme gerek yok, sonucta veri tabanına kaydediyorum
+                        
                     ));
                 } else {
                     echo json_encode(array(
