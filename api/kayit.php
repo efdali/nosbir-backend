@@ -13,6 +13,47 @@ if($_POST){
         }
 
         // TODO resim işlemleri
+        if(!isset($_FILES["resim"])){
+            echo json_encode(array(
+                "mesaj" => "Lutfen bir resim dosyası yukleyin.",
+                "durum" => 0
+            ));
+        }else{
+            $hata=$_FILES["resim"]["error"];
+            if($hata!=0){
+                $isim=$_FILES["resim"]["name"];
+                $tip=$_FILES["resim"]["type"];
+                $uzanti=explode('.',$isim);
+                $uzanti=$uzanti[count($uzanti)-1];
+                if($tip!='image/jpeg' && $uzanti!='jpg'){
+                    echo json_encode(array(
+                        "mesaj" => "Lutfen jpg uzantili bir dosya seciniz.",
+                        "durum" => 0
+                    ));
+                }else{
+                    $dosya=$_FILES["resim"]["tmp_name"];
+                    copy($dosya,'resimler/'.$_FILES["resim"]["name"]);
+                    
+                    $resim=$db->prepare("INSERT INTO uye SET resim=:resim");
+                    $resim->bindParam(":resim",$resim);
+                    $resim->execute();
+                    if($resim->fetch(PDO::FETCH_ASSOC)){
+
+                        echo json_encode(array(
+                            "mesaj" => "Resim basarıyla kaydedildi.",
+                            "durum" => 1
+                        ));
+
+                    }else{
+                        echo json_encode(array(
+                            "mesaj" => "Resim kaydedilirken bir sorun olustu.",
+                            "durum" =>0
+                        ));
+                    }
+                }
+            }
+
+        }
 
         $kadi=@strip_tags(trim($_POST["kadi"]));
         $sifre=@md5(strip_tags(trim($_POST["sifre"])));
@@ -20,36 +61,50 @@ if($_POST){
 
         if(!kadi ||  !$sifre || !$eposta ){
             echo json_encode(array(
-                "mesaj" => "Lutfen tum alanları doldurun"
+                "mesaj" => "Lutfen tum alanları doldurun.",
+                "durum" => 0
                 
             ));
         }else if(is_numeric($kadi)){
             echo json_encode(array(
-                "mesaj" => "Kullanıcı adı sadece sayılardan oluşamaz"
+                "mesaj" => "Kullanıcı adı sadece sayılardan oluşamaz.",
+                "durum" => 0
                 
             ));
         }else if(strlen($kadi)>=15){
             echo json_encode(array(
-                "mesaj" => "Lutfen kullanıcı adınızı 15 karakterden büyük yapmayın"
+                "mesaj" => "Lutfen kullanıcı adınızı 15 karakterden büyük yapmayın.",
+                "durum" => 0
                 
             ));
         }else if(!filter_var($eposta,FILTER_VALIDATE_EMAIL)){
             echo json_encode(array(
-                "mesaj" => "Lutfen gecerli bir eposta giriniz"
+                "mesaj" => "Lutfen gecerli bir eposta giriniz.",
+                "durum" => 0
                 
             )); 
         }else{
 
             // TODO aynı maille giriş var mı kontrol edilecek..
+            $mailtekrar=$db->prepare("SELECT * FROM uye WHERE eposta=:eposta");
+            $mailtekrar->bindParam(":eposta",$eposta);
+            $mailtekrar->execute();
+            if(!$mailtekrar->fetch(PDO::FETCH_ASSOC)){
+                echo json_encode(array(
+                    "mesaj" => "Bu eposta adresini kullanamazsınız."
+                ));
+            }else{
 
-            //aynı isimle kayıtlı uye var mı?
+
+            
             $uyetekrar = $db->prepare("SELECT * FROM uye WHERE kadi=:kadi limit 0,1");
             $uyetekrar->bindParam(":kadi",$kadi);
             $uyetekrar->execute();
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
             if ($uyetekrar->rowCount()) {
                 echo json_encode(array(
-                    "mesaj" =>"Bu kullanıcı adını kullanamazsınız"
+                    "mesaj" =>"Bu kullanıcı adını kullanamazsınız.",
+                    "durum" => 0
                 ));
             }else{
                 $iptekrar = $db->prepare("SELECT * FROM uye WHERE ip= :ip");
@@ -58,7 +113,7 @@ if($_POST){
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
                 if ($iptekrar->rowCount() > 3) {
                     echo json_encode(array(
-                        "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız",
+                        "mesaj" => "Aynı ip ile daha fazla hesap açamazsınız.",
                         "durum" => 0
                     ));
                 }else{
@@ -82,7 +137,7 @@ if($_POST){
                     if($ekle->execute()){
                        
                         echo json_encode(array(
-                            "mesaj" => "Basarıyla Kayıt edildi",
+                            "mesaj" => "Basarıyla Kayıt edildi.",
                             "durum" => 1
                             
                         ));
@@ -99,7 +154,7 @@ if($_POST){
                 }
 
             }
-
+        }
             
         }
 
