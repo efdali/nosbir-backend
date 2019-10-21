@@ -31,7 +31,8 @@ if($row=$post->fetch(PDO::FETCH_ASSOC)){
     //TODO secilen posta kayıtlı yorumları getir.
     $yorum=$db->prepare("select * from uye u,post p,yorum y on
                             y.uyeId=u.id and y.postId=p.id and p.uyeId=u.id and p.toplulukId=t.id
-                            where y.postId=:p.id ");
+                            where y.postId=:p.id 
+                            order by y.tarih desc");
     
     $yorum->bindParam("p.id:",$row["p.id"]);
     $yorum->execute();
