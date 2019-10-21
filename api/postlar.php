@@ -15,9 +15,26 @@ $basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);
 $toplam=$sorgu->rowCount();
 
 
+// TODO yorum sayısı eklencek
+if($toplam){
+    foreach($toplam as $row){
+        $yorum=$db->prepare("select * from uye u,post p,yorum y on
+                            y.uyeId=u.id and y.postId=p.id and p.uyeId=u.id and p.toplulukId=t.id
+                            where y.postId=:p.id ");
+    
+    $yorum->bindParam("p.id:",$row["p.id"]);
+    $yorum->execute();
+    $yorums=$yorum->fetchAll(PDO::FETCH_ASSOC);
+    $yorumSayisi=$yorum->rowCount();
+
+    }
+    
+}
+
+
 echo json_encode(array(
     "postlar"=>$basliklar,
-    "toplam"=>$toplam
+    "toplam"=>$toplam,
+    "yorumSayi"=>$yorumSayi
 ));
 
-// TODO yorum sayısı eklencek

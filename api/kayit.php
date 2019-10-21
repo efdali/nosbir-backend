@@ -13,55 +13,7 @@ if($_POST){
         }
 
         // TODO resim işlemleri
-        if(!isset($_FILES["resim"])){
-            echo json_encode(array(
-                "mesaj" => "Lutfen bir resim dosyası yukleyin.",
-                "durum" => 0
-            ));
-        }else{
-            $hata=$_FILES["resim"]["error"];
-            if($hata!=0){$boyut=$_FILES["resim"]["size"];
-                if($boyut>(1024*1024*3)){
-                    echo json_encode(array(
-                        "mesaj" => "dosya boyutu 3mb dan büyük olamaz",
-                        "durum" => 0
-                    ));
-                }else{
-                $isim=$_FILES["resim"]["name"];
-                $tip=$_FILES["resim"]["type"];
-                $uzanti=explode('.',$isim);
-                $uzanti=$uzanti[count($uzanti)-1];
-                if($tip!='image/jpeg' && $uzanti!='jpg'){
-                    echo json_encode(array(
-                        "mesaj" => "Lutfen jpg uzantili bir dosya seciniz.",
-                        "durum" => 0
-                    ));
-                }else{
-                    
-                    $dosya=$_FILES["resim"]["tmp_name"];
-                    copy($dosya,'resimler/'.$_FILES["resim"]["name"]);
-                    
-                    $resim=$db->prepare("INSERT INTO uye SET resim=:resim");
-                    $resim->bindParam(":resim",$resim);
-                    $resim->execute();
-                    if($resim->fetch(PDO::FETCH_ASSOC)){
-
-                        echo json_encode(array(
-                            "mesaj" => "Resim basarıyla kaydedildi.",
-                            "durum" => 1
-                        ));
-
-                    }else{
-                        echo json_encode(array(
-                            "mesaj" => "Resim kaydedilirken bir sorun olustu.",
-                            "durum" =>0
-                        ));
-                    }
-                }
-            }
-            }
-
-        }
+        
 
         $kadi=@strip_tags(trim($_POST["kadi"]));
         $sifre=@md5(strip_tags(trim($_POST["sifre"])));
