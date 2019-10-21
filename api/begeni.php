@@ -25,11 +25,21 @@ if ($_POST) {
     $begenme->bindParam("tur:",$tur);
     $begenme->execute();
     if($begenme->fetch(PDO::FETCH_ASSOC)){
+
+        echo json_encode(array(
+            "mesaj" => "Bu soruyu daha önce beğendin",
+            "durum" => 0
+          ));
+        
+    }else{
         $kaydet=$db->prepare("insert into begeni on
         uyeId=:uyeId,
         postId=:postId,
         tur=:tur
         ");
+        $kaydet->bindParam("uyeId:",$id);
+        $kaydet->bindParam("postId:",$postId);
+        $kaydet->bindParam("tur:",$tur);
         $kaydet->execute();
         if($row=$kaydet->fetch(PDO::FETCH_ASSOC)){
             echo json_encode(array(
@@ -38,23 +48,21 @@ if ($_POST) {
             ));
         }else{
             echo json_encode(array(
-              "mesaj" => "Begeni kaydedilirken bir sorun oluştu",
-              "durum" => 0
+                "mesaj" => "Kaydedilirken bir hata oluştu",
+                "durum" => 0
             ));
+            
         }
-        
-    }else{
-        echo json_encode(array(
-            "mesaj" => "Herhangi bir beğeni bulunmuyor",
-            "durum" => 0
-        ));
     }
-
-
-
-
-
-
-
 }
+        
+    
+
+
+ 
+
+
+
+
+
 ?>
