@@ -13,7 +13,7 @@ if($_POST){
             "durum" => 0
         ));
     }else{
-        $giris = $db->prepare("SELECT * FROM uye WHERE kadi= :kadi AND sifre= :sifre");
+        $giris = $db->prepare("SELECT * FROM uye WHERE kadi= :kadi AND sifre= :sifre LIMIT 1");
         $giris->bindParam(":kadi",$kadi);
         $giris->bindParam(":sifre",$sifre);
         $giris->execute();
