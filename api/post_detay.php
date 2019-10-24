@@ -41,11 +41,10 @@ if($row=$post->fetch(PDO::FETCH_ASSOC)){
 
 }else{
     echo json_encode(array(
-        "mesaj" => "Boyle bir başlık veritabanında bulunmamaktadır.",
+        "mesaj" => "Boyle bir başlık bulunmamaktadır.",
         "durum" => 0
     ));
 }
-
 
 
 
