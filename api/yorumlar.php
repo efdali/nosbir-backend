@@ -27,12 +27,11 @@ if ($_POST) {
     }else{
         //Efdal! bu kodla adam yorum attıktan 30 saniye sonra yorum atabilecek
         //kalsın mı? boylece bir fonksiyon yazıp saniye başı mesaj atamıyacak
-        $yorumAyar=$db->prepare("select * from yorum y, uye u 
-                                    on y.uyeId=u.id where
+        $yorumAyar=$db->prepare("select * from yorum y where
                                     y.tarih>now() - interval 30 second 
-                                    and y.uyeId=:y.uyeId");
+                                    and uyeId=:uyeId");
                                     
-        $yorumaAyar->bindParam("y.uyeId:",$id);
+        $yorumAyar->bindParam(":uyeId",$id);
         $yorumAyar->execute();
 
         if($row=$yorumAyar->fetch(PDO::FETCH_ASSOC)){
@@ -41,22 +40,28 @@ if ($_POST) {
                 "durum" => 0
             ));
         }else{
-            $yorumEkle=$db->prepare("insert into yorumlar set 
+            $yorumEkle=$db->prepare("insert into yorum set 
             uyeId=:uyeId,
             icerik=:icerik,
             postId=:postId");
             
-            $yorumEkle->bindParam("uyeId:",$id);
-            $yorumEkle->bindParam("icerik:",$icerik);
-            $yorumEkle->bindParam("postId:",$postId);
+            $yorumEkle->bindParam(":uyeId",$id);
+            $yorumEkle->bindParam(":icerik",$icerik);
+            $yorumEkle->bindParam(":postId",$postId);
 
-            $yorumEkle->execute();
-            $yorumEkle->fetch(PDO::FETCH_ASSOC);
+            if($yorumEkle->execute()){
+                echo json_encode(array(
+                    "mesaj" => "Yorum başarıyla kaydedildi",
+                    "durum" => 1
+                ));
+            }else{
+                echo json_encode(array(
+                    "mesaj" => "Yorum kaydedilirken bir hata oluştu.",
+                    "durum" => 0
+                ));
+            }
 
-            echo json_encode(array(
-                "mesaj" => "Yorum başarıyla kaydedildi",
-                "durum" => 1
-            ));
+            
 
         }
         

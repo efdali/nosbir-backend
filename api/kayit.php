@@ -19,7 +19,7 @@ if($_POST){
         $sifre=@md5(strip_tags(trim($_POST["sifre"])));
         $eposta=strip_tags(trim($_POST["eposta"]));
 
-        if(!kadi ||  !$sifre || !$eposta ){
+        if(!$kadi ||  !$sifre || !$eposta ){
             echo json_encode(array(
                 "mesaj" => "Lutfen tum alanları doldurun.",
                 "durum" => 0
@@ -49,7 +49,7 @@ if($_POST){
             $mailtekrar=$db->prepare("SELECT * FROM uye WHERE eposta=:eposta");
             $mailtekrar->bindParam(":eposta",$eposta);
             $mailtekrar->execute();
-            if(!$mailtekrar->fetch(PDO::FETCH_ASSOC)){
+            if($mailtekrar->rowCount()){
                 echo json_encode(array(
                     "mesaj" => "Bu eposta adresini kullanamazsınız."
                 ));

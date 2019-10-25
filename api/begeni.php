@@ -27,7 +27,7 @@ if ($_POST) {
     if($begenme->fetch(PDO::FETCH_ASSOC)){
 
         echo json_encode(array(
-            "mesaj" => "Bu soruyu daha önce beğendin",
+            "mesaj" => "Bu postu daha önce beğendin",
             "durum" => 0
           ));
         
