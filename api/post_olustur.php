@@ -25,13 +25,7 @@ if ($_POST) {
         ));
     } else {
         
-        $grup = $db->prepare('select * from post p');
-        $grup->execute();
-
-        while ($row = $grup->fetchAll(PDO::FETCH_ASSOC)) {
-            if ($row["toplulukId"] == $toplulukId) {
-
-            } else {
+        
                 $ekle = $db->prepare("INSERT INTO postlar SET
                 baslik=:baslik,
                 icerik=:icerik,
@@ -56,12 +50,12 @@ if ($_POST) {
                         "durum" => 0
                     ));
                 }
-            }
+            
         }
     }
 
 
-}
+
 
 
 ?>
