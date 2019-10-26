@@ -1,9 +1,12 @@
 <?php
-
-
+//TODO Begeni
+// TODO SQL hatalı
 require_once("../sistem/ayar.php");
 
 $link=$_GET["link"];
+
+
+
 
 
 

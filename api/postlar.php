@@ -1,5 +1,6 @@
 <?php
-
+//TODO Begeni
+// TODO SQL hatalı
 require_once("../sistem/ayar.php");
 
 $sayfa=@$_GET["s"] ? @$_GET["s"] : 1;
@@ -25,3 +26,7 @@ echo json_encode(array(
     "postlar"=>$basliklar,
     "toplam"=>$toplam["COUNT(*)"]
 ));
+
+
+
+?>
