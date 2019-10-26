@@ -142,12 +142,12 @@ if ($_POST) {
         echo json_encode(array(
             "mesaj" => "Profil başarıyla guncellendi.",
             "durum" => 1
-        ))
+        ));
     }else{
         echo json_encode(array(
             "mesaj" => "Profil guncellenirken bir sorun oluştu.",
             "durum" => 0
-        ))
+        ));
     }
 
 

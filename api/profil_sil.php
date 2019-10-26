@@ -1,4 +1,5 @@
 <?php
+
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
 if ($_POST) {
@@ -15,24 +16,25 @@ if ($_POST) {
     $id=$token->{"token"}->{"data"}->{"id"}; 
 
 
-    $postId=$_POST["id"];
-
-
-    $sil=$db->prepare("delete yorum where id=:id");
-    $sil->bindParam(":id",$postId);
-    
+    $sil=$db->prepare("delete * from uye where id=:id limit 1");
+    $sil->bindParam(":sil",$sil);
     if($sil->execute()){
         echo json_encode(array(
-            "mesaj" => "Yorum başarıyla silindi",
+            "mesaj" => "Hesap başarıyla silindi",
             "durum" => 1
         ));
-
     }else{
         echo json_encode(array(
-            "mesaj" => "Yorum silinirken bir hata oluştu",
+            "mesaj" => "Hesap silinirken bir hata oluştu",
             "durum" => 0
         ));
     }
+
+
+
+
+
+
 
 
 
