@@ -10,16 +10,17 @@ if($_POST){
                         group by p.id
                         order by ys desc
                         limit 10");
+    $listele->execute();
+    $row=$listele->fetchAll(PDO::FETCH_ASSOC);
     
-    if($listele->execute()){
+    if($row){
         echo json_encode(array(
-            "mesaj" => "Tum zamanların en populer 10 yorumu başarıyla listelendi.",
-            "durum" => 1
+            "tumpop"=> $row
         ));
         
     }else{
         echo json_encode(array(
-            "mesaj" => "Tum zamanların en populer 10 yorumu listelenirken bir sorun oluştu.",
+            "mesaj" => "Tum zamanların en populer 10 postu listelenirken bir sorun oluştu.",
             "durum" => 0
         ));
         
@@ -30,9 +31,29 @@ if($_POST){
     
     //Bugün
     }if($_POST["durum"]==0){
+    //TODO INTERVAL kısmı çıkart
+    $listele=$db->prepare("select *,count(yorum.postId) from post 
+                        left join yorum on yorum.postId=post.id
+                        where post.tarih >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+                        group by post.id
+                        order by post.tarih desc
+                        limit 10");
+
+    $listele->execute();
+
+    $row=$listele->fetchAll(PDO::FETCH_ASSOC);
 
 
-
+    if($row){
+        echo json_encode(array(
+            "bugunpop" => $row
+        ));
+    }else{
+        echo json_encode(array(
+            "mesaj" => "Bugunun en populer 10 postu listelenirken bir sorun oluştu",
+            "durum" => 0
+        ));
+    }
 
 
 
