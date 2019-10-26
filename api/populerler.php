@@ -31,13 +31,13 @@ if($_POST){
     
     //Bugün
     }if($_POST["durum"]==0){
-    //TODO INTERVAL kısmı çıkart
+    //TODO INTERVAL kısmı :DATE_SUB(CURDATE(), INTERVAL 0 DAY)
     $listele=$db->prepare("select *,count(yorum.postId) from post 
-                        left join yorum on yorum.postId=post.id
-                        where post.tarih >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
-                        group by post.id
-                        order by post.tarih desc
-                        limit 10");
+                            left join yorum on yorum.postId=post.id
+                            where post.tarih >= curdate()
+                            group by post.id
+                            order by post.tarih 
+                            limit 10");
 
     $listele->execute();
 
