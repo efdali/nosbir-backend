@@ -10,10 +10,10 @@ $link=$_GET["link"];
 
 
 
-$post=$db->prepare("select *,count(b.postId) from post p
-                    left join begeni b on b.postId=p.id 
-                    left join topluluk t on t.id=p.toplulukId
-                    left join uye u on u.id=p.id and b.uyeId=u.id
+$post=$db->prepare("select *,count(l.post_id) from posts p
+                    left join likes l on l.post_id=p.post_id 
+                    left join groups g on g.group_id=p.group_id
+                    left join users u on u.user_id=p.post_id and b.uyeId=u.id
                     where p.seoLink=:link and u.durum=0 and p.durum!=0
                     ");
                     

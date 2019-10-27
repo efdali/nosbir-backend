@@ -37,6 +37,11 @@ if($_POST){
                 "durum" => 0
                 
             ));
+        }else if(strlen($sifre)<=6){
+            echo json_encode(array(
+                "mesaj"=>"Şifre 6 karakterden uzun olcak",
+                "durum"=>0
+            ));
         }else if(!filter_var($eposta,FILTER_VALIDATE_EMAIL)){
             echo json_encode(array(
                 "mesaj" => "Lutfen gecerli bir eposta giriniz.",
@@ -46,8 +51,8 @@ if($_POST){
         }else{
 
             // TODO aynı maille giriş var mı kontrol edilecek..
-            $mailtekrar=$db->prepare("SELECT * FROM uye WHERE eposta=:eposta");
-            $mailtekrar->bindParam(":eposta",$eposta);
+            $mailtekrar=$db->prepare("SELECT * FROM users WHERE  email=:email");
+            $mailtekrar->bindParam(":email",$eposta);
             $mailtekrar->execute();
             if($mailtekrar->rowCount()){
                 echo json_encode(array(
@@ -57,8 +62,8 @@ if($_POST){
 
 
             
-            $uyetekrar = $db->prepare("SELECT * FROM uye WHERE kadi=:kadi limit 0,1");
-            $uyetekrar->bindParam(":kadi",$kadi);
+            $uyetekrar = $db->prepare("SELECT * FROM users WHERE nick=:nick limit 0,1");
+            $uyetekrar->bindParam(":nick",$kadi);
             $uyetekrar->execute();
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
             if ($uyetekrar->rowCount()) {
@@ -67,7 +72,7 @@ if($_POST){
                     "durum" => 0
                 ));
             }else{
-                $iptekrar = $db->prepare("SELECT * FROM uye WHERE ip= :ip");
+                $iptekrar = $db->prepare("SELECT * FROM users WHERE ip= :ip");
                 $iptekrar->bindParam(":ip", $ip);
                 $iptekrar->execute();
                 $row=$iptekrar->fetch(PDO::FETCH_ASSOC);
@@ -78,21 +83,21 @@ if($_POST){
                     ));
                 }else{
 
-                    $ekle = $db->prepare("INSERT INTO uye SET
-                    kadi=:kadi,
-                    sifre= :sifre,
-                    eposta= :eposta,
+                    $ekle = $db->prepare("INSERT INTO users SET
+                    nick=:nick,
+                    passwd= :passwd,
+                    email= :email,
                     ip= :ip,
-                    durum= :durum,
-                    rutbe= :rutbe");
+                    user_status= :user_status,
+                    rank= :rank");
                     $durum = 1;
                     $rutbe = 1;
-                    $ekle->bindParam(":kadi",$kadi);
-                    $ekle->bindParam(":sifre",$sifre);
-                    $ekle->bindParam(":eposta",$eposta);
+                    $ekle->bindParam(":nick",$kadi);
+                    $ekle->bindParam(":passwd",$sifre);
+                    $ekle->bindParam(":email",$eposta);
                     $ekle->bindParam(":ip",$ip);
-                    $ekle->bindParam(":durum", $durum);
-                    $ekle->bindParam(":rutbe", $rutbe);
+                    $ekle->bindParam(":user_status", $durum);
+                    $ekle->bindParam(":rank", $rutbe);
 
                     if($ekle->execute()){
                        

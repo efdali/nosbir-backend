@@ -27,11 +27,11 @@ if ($_POST) {
     }else{
         //Efdal! bu kodla adam yorum attıktan 30 saniye sonra yorum atabilecek
         //kalsın mı? boylece bir fonksiyon yazıp saniye başı mesaj atamıyacak
-        $yorumAyar=$db->prepare("select * from yorum y where
-                                    y.tarih>now() - interval 30 second 
-                                    and uyeId=:uyeId");
+        $yorumAyar=$db->prepare("select * from answer a where
+                                    a.created_at>now() - interval 30 second 
+                                    and user_id=: user_id");
                                     
-        $yorumAyar->bindParam(":uyeId",$id);
+        $yorumAyar->bindParam(":user_id",$id);
         $yorumAyar->execute();
 
         if($row=$yorumAyar->fetch(PDO::FETCH_ASSOC)){
@@ -40,14 +40,14 @@ if ($_POST) {
                 "durum" => 0
             ));
         }else{
-            $yorumEkle=$db->prepare("insert into yorum set 
-            uyeId=:uyeId,
-            icerik=:icerik,
-            postId=:postId");
+            $yorumEkle=$db->prepare("insert into answer set 
+            user_id=:user_id,
+            text=:text,
+            post_id=:post_id");
             
-            $yorumEkle->bindParam(":uyeId",$id);
-            $yorumEkle->bindParam(":icerik",$icerik);
-            $yorumEkle->bindParam(":postId",$postId);
+            $yorumEkle->bindParam(":user_id",$id);
+            $yorumEkle->bindParam(":text",$icerik);
+            $yorumEkle->bindParam(":post_id",$postId);
 
             if($yorumEkle->execute()){
                 echo json_encode(array(

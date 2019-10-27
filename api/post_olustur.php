@@ -26,16 +26,16 @@ if ($_POST) {
     } else {
         
         
-                $ekle = $db->prepare("INSERT INTO postlar SET
-                baslik=:baslik,
-                icerik=:icerik,
-                toplulukId=:toplulukId,
-                uyeId=:uyeId");
+                $ekle = $db->prepare("INSERT INTO posts SET
+                title=:title,
+                content=:content,
+                groups_id=:groups_id,
+                user_id=:user_id");
 
-                $ekle->bindParam(":baslik", $baslik);
-                $ekle->bindParam(":icerik", $icerik);
-                $ekle->bindParam(":toplulukId", $toplulukId);
-                $ekle->bindParam(":uyeId", $id);
+                $ekle->bindParam(":title", $baslik);
+                $ekle->bindParam(":content", $icerik);
+                $ekle->bindParam(":groups_id", $toplulukId);
+                $ekle->bindParam(":user_id", $id);
 
                 $kontrol = $ekle->execute();
                 if ($kontrol) {

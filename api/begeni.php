@@ -18,11 +18,11 @@ if ($_POST) {
 
 
 
-    $begenme=$db->prepare("select * from begeni b
-                        where b.uyeId=:uyeId and b.postId=:postId and b.tur=:tur");
-    $begenme->bindParam("uyeId:",$id);
+    $begenme=$db->prepare("select * from likes l
+                        where l.user_id=:user_id and l.post_id=:post_id and l.type=:type");
+    $begenme->bindParam("user_id:",$id);
     $begenme->bindParam("postId:",$postId);
-    $begenme->bindParam("tur:",$tur);
+    $begenme->bindParam("type:",$tur);
     $begenme->execute();
     if($begenme->fetch(PDO::FETCH_ASSOC)){
 
@@ -32,14 +32,14 @@ if ($_POST) {
           ));
         
     }else{
-        $kaydet=$db->prepare("insert into begeni on
-        uyeId=:uyeId,
-        postId=:postId,
-        tur=:tur
+        $kaydet=$db->prepare("insert into likes on
+        user_id=:user_id,
+        post_id=:post_id,
+        type=:type
         ");
-        $kaydet->bindParam("uyeId:",$id);
-        $kaydet->bindParam("postId:",$postId);
-        $kaydet->bindParam("tur:",$tur);
+        $kaydet->bindParam("user_id:",$id);
+        $kaydet->bindParam("post_id:",$postId);
+        $kaydet->bindParam("type:",$tur);
         $kaydet->execute();
         if($row=$kaydet->fetch(PDO::FETCH_ASSOC)){
             echo json_encode(array(

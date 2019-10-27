@@ -1,7 +1,7 @@
 <?php
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-if ($_POST) {
+if (isset($_POST)) {
 
     $token = json_decode(TokenDogrula::dogrula()); 
     if ($token->{"durum"} == 0) { 
@@ -19,77 +19,21 @@ if ($_POST) {
     $eposta=strip_tags(trim($_POST["eposta"]));
     
 
-    $sec=$db->prepare("select * from uye where id=:id limit 1");
-    $sec->bindParam(":id",$id);
-    $sec->execute();
+    $sec=$db->prepare("select * from users where user_id= :user_id limit 1");
+    $sec->bindParam(":user_id",$id);
+    $sec->execute(); 
     $row=$sec->fetch(PDO::FETCH_ASSOC);
 
-
-
-    
-    if($_FILES["resim"]["name"]){
-        $boyut=1024*1024*3;
-        $uzanti=substr($_FILES["resim"]["name"],-4,4);
-        $adi=rand(0,9999999).$uzanti;
-        $yol="../resimler/".$adi;
-
-        if($_FILES["resim"]["size"]>$boyut){
+    if($sifre){ 
+        if(strlen($sifre)<=6){
             echo json_encode(array(
-                "mesaj" => "Dosya boyutu 3 mb'dan fazla olamaz",
-                "durum" => 0
-            ));       
-         }else{
-            $tip = ["image/jpeg","image/png","image/jpg","image/gif"];
-
-
-            if(in_array($_FILES["resim"]["type"],$tip)){
-
-                if(is_uploaded_file($_FILES["resim"]["tmp_name"])){
-
-                    if(move_uploaded_file($_FILES["resim"]["tmp_name"],$yol)){
-
-                        if($row["resim"]){
-                            unlink($row["resim"]);
-                        }
-                    }else{
-                        echo json_encode(array(
-                            "mesaj" => "Dosya taşınırken bir sorun oluştu.",
-                            "durum" => 0
-                        ));
-                    }
-
-                }else{
-                    echo json_encode(array(
-                        "mesaj" => "Dosya yuklenirken bir sorun oluştu.",
-                        "durum" => 0
-                    ));
-                }
-
-            }else{
-                echo json_encode(array(
-                    "mesaj" => "Resim dosya formatı geçersiz.",
-                    "durum" => 0
-                ));
-            }
-         }
-        
-    }
-
-
-
-    
-
-
-
-    if($sifre){
+                "mesaj"=>"şifre 6 karakterden az olamaz",
+                "durum"=>0
+            ));
+        }
         $sifre=md5($sifre);
     }else{
         $sifre=$row["sifre"];
-    }
-
-
-    if(!$yol){
-        $yol=$row["resim"];
     }
 
     if($kadi){
@@ -121,24 +65,71 @@ if ($_POST) {
     }else{
         $eposta=$row["eposta"];
     }
-
-
     
+    if($_FILES["resim"]["name"]){
+        $boyut=1024*1024*3;
+        $uzanti=explode(".",$_FILES["resim"]["name"]);
+        $uzanti=$uzanti[count($uzanti)-1]; 
+        $adi=$kadi+"-"+date('m/d/Y')+"-"+rand(0,9999999)+"."+$uzanti;
+        $yol="../resimler/".$adi;
+
+        if($_FILES["resim"]["size"]>$boyut){
+            echo json_encode(array(
+                "mesaj" => "Dosya boyutu 3 mb'dan fazla olamaz",
+                "durum" => 0
+            ));     
+         }else{
+            $tip = ["image/jpeg","image/png","image/jpg","image/gif"];
 
 
+            if(in_array($_FILES["resim"]["type"],$tip)){
 
-    $guncelle=$db->prepare("update uye set
-                        kadi=:kadi,
-                        eposta=:eposta,
-                        sifre=:sifre,
-                        resim=:resim");
-    $guncelle->bindParam("kadi:",$kadi);
-    $guncelle->bindParam("eposta",$eposta);
-    $guncelle->bindParam("sifre",$sifre);
-    $guncelle->bindParam("resim",$yol);
+                if(is_uploaded_file($_FILES["resim"]["tmp_name"])){
+
+                    if(move_uploaded_file($_FILES["resim"]["tmp_name"],$yol)){
+                                        
+                        
+                    }else{
+                        echo json_encode(array(
+                            "mesaj" => "Dosya taşınırken bir sorun oluştu.",
+                            "durum" => 0
+                        ));
+                    }
+
+                }else{
+                    echo json_encode(array(
+                        "mesaj" => "Dosya yuklenirken bir sorun oluştu.",
+                        "durum" => 0
+                    ));
+                }
+
+            }else{
+                echo json_encode(array(
+                    "mesaj" => "Resim dosya formatı geçersiz.",
+                    "durum" => 0
+                ));
+            }
+         }
+        
+    }else{
+        $yol=$row["resim"];
+    }
+
+    $guncelle=$db->prepare("update users set
+                        nick=:nick,
+                        email=:email,
+                        passwd=:passwd,
+                        picture=:picture
+                        where user_id = :user_id");
+
+    $guncelle->bindParam(":user_id",$id);
+    $guncelle->bindParam(":nick",$kadi);
+    $guncelle->bindParam(":email",$eposta);
+    $guncelle->bindParam(":passwd",$sifre);
+    $guncelle->bindParam(":picture",$yol);
 
 
-    if($guncelle->execute){
+    if($guncelle->execute()){
         echo json_encode(array(
             "mesaj" => "Profil başarıyla guncellendi.",
             "durum" => 1
@@ -149,16 +140,6 @@ if ($_POST) {
             "durum" => 0
         ));
     }
-
-
-
-
-
-
-
-
-
-
-    }
+}
 
 ?>

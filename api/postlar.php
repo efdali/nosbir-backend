@@ -15,6 +15,8 @@ $sorgu=$db->prepare("select p.*,t.id,t.baslik as topluluk,t.logo,u.kadi,u.resim,
                 GROUP BY y.postId order by p.tarih DESC 
                 limit $offset,$limit");
 
+                //knk burda beğenimi çekicez aynen knk 
+
 $sorgu->execute();
 $basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);
 

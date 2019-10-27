@@ -3,12 +3,20 @@
 // TODO SQL hatalı
 $link=$_GET["link"];
 $aranan=$_GET["aranan"];
+$topluluk=@$_GET["topluluk"];
 
 
 $sayfa=@$_GET["s"] ? @$_GET["s"] : 1;
 $limit=10;
 
 $offset=($sayfa-1)*$limit;
+
+
+if(!$topluluk){
+
+}else{
+    
+}
 
 
 $arama=$db->prepare("select *,count(b.postId) from post p

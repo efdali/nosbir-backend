@@ -1,9 +1,7 @@
 <?php
-
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-if ($_POST) {
-
+if (isset($_GET)) {
     $token = json_decode(TokenDogrula::dogrula()); 
     if ($token->{"durum"} == 0) { 
         echo json_encode(array(
@@ -15,9 +13,8 @@ if ($_POST) {
 
     $id=$token->{"token"}->{"data"}->{"id"}; 
 
-
-    $sil=$db->prepare("delete * from uye where id=:id limit 1");
-    $sil->bindParam(":sil",$sil);
+    $sil=$db->prepare("delete from users where user_id=:user_id limit 1");
+    $sil->bindParam(":user_id",$id);
     if($sil->execute()){
         echo json_encode(array(
             "mesaj" => "Hesap başarıyla silindi",
