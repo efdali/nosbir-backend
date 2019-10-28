@@ -20,7 +20,7 @@ if(!$topluluk){
                     inner join groups g on p.groups_id=g.group_id
                     inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1 and p.title like aranan=:aranan
                     group by p.post_id
-                    order by created_at 
+                    order by created_at desc
                     limit $offset,$limit");
 
 }else{
@@ -32,7 +32,7 @@ if(!$topluluk){
                         inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1 and p.title like aranan=:aranan
                         and g.group_id=:group_id
                         group by p.post_id
-                        order by created_at 
+                        order by created_at desc
                         limit $offset,$limit");
 
                         $arama->bindParam(":group_id",$topluluk);
