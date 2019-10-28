@@ -7,9 +7,6 @@ $link=$_GET["link"];
 
 
 
-
-
-
 $post=$db->prepare("select p.*,sum(l.type),toplam from posts p 
                     left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                     left join likes l on l.post_id=p.post_id 
@@ -24,12 +21,7 @@ $post->execute();
 
 if($row=$post->fetch(PDO::FETCH_ASSOC)){
     $postId=$row["id"];
-    $postBegeni=$db->prepare("select * from post p
-                        inner join begeni b on b.postId=p.id
-                        where p.seoLink=:link
-                        ");
-    $postBegeni->bindParam(":link",$link);
-    if($postBegeni->execute()){
+    
 
         $postYorum=$db->prepare("select * ,count(p.id) from yorum y,post p
                             where y.postId=:$postId
@@ -49,13 +41,7 @@ if($row=$post->fetch(PDO::FETCH_ASSOC)){
             ));
         }
 
-    }else{
-        echo json_encode(array(
-            "mesaj" => "Post begeniler gonderilirken bir hata oluştu",
-            "durum" => 0
-        ));
-
-    }
+   
 }else{
     echo json_encode(array(
         "mesaj" => "Boyle bir başlık bulunmamaktadır.",
