@@ -7,15 +7,15 @@ $sayfa=@$_GET["s"] ? @$_GET["s"] : 1;
 $limit=10;
 
 $offset=($sayfa-1)*$limit;
-$sorgu=$db->prepare("select p.*,t.id,t.baslik as topluluk,t.logo,u.kadi,u.resim,COUNT(y.id) as yorum
-                from post p left JOIN 
-                (select * from yorum where yorum.durum!=0) y on p.id=y.postId 
-                INNER JOIN topluluk t on p.toplulukId=t.id
-                INNER JOIN uye u on p.uyeId=u.id where u.durum =1 and p.durum!=0
-                GROUP BY y.postId order by p.tarih DESC 
-                limit $offset,$limit");
-
-                //knk burda beğenimi çekicez aynen knk 
+$sorgu=$db->prepare("select p.*,sum(l.type),toplam from posts p 
+                    left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
+                    left join likes l on l.post_id=p.post_id 
+                    inner join groups g on p.groups_id=g.group_id
+                    inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1
+                    group by p.post_id
+                    order by created_at 
+                    limit $offset,$limit");
+ 
 
 $sorgu->execute();
 $basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);

@@ -10,15 +10,15 @@ $link=$_GET["link"];
 
 
 
-$post=$db->prepare("select *,count(l.post_id) from posts p
+$post=$db->prepare("select p.*,sum(l.type),toplam from posts p 
+                    left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                     left join likes l on l.post_id=p.post_id 
-                    left join groups g on g.group_id=p.group_id
-                    left join users u on u.user_id=p.post_id and b.uyeId=u.id
-                    where p.seoLink=:link and u.durum=0 and p.durum!=0
+                    inner join groups g on p.groups_id=g.group_id
+                    inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1 and p.seo=:seo
+                    group by p.post_id
                     ");
                     
-
-$post->bindParam(":link",$link);
+$post->bindParam(":seo",$link);
 $post->execute();
 
 
