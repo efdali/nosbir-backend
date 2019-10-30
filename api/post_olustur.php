@@ -1,5 +1,6 @@
 <?php
 require_once("../sistem/ayar.php");
+require_once("../sistem/fonksiyon.php");
 require_once("../yardımcılar/token-dogrula.php");
 if ($_POST) {
 
@@ -16,6 +17,7 @@ if ($_POST) {
     $baslik = strip_tags(trim($_POST["baslik"]));
     $icerik = strip_tags(trim($_POST["icerik"]));
     $toplulukId = strip_tags(trim($_POST["toplulukId"]));
+    $seo=seolink(strip_tags(trim($_POST["baslik"])))."-".$toplulukId."-".$id."-".rand(0,9999999);
 
 
     if (!$baslik || !$icerik || !$toplulukId) {
@@ -30,12 +32,14 @@ if ($_POST) {
                 title=:title,
                 content=:content,
                 groups_id=:groups_id,
-                user_id=:user_id");
+                user_id=:user_id,
+                seo=:seo");
 
                 $ekle->bindParam(":title", $baslik);
                 $ekle->bindParam(":content", $icerik);
                 $ekle->bindParam(":groups_id", $toplulukId);
                 $ekle->bindParam(":user_id", $id);
+                $ekle->bindParam(":seo", $seo);
 
                 $kontrol = $ekle->execute();
                 if ($kontrol) {
