@@ -2,11 +2,9 @@
 require_once("../sistem/ayar.php");
 require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
-if($_POST){
+if(isset($_POST)){
     $kadi=@strip_tags(trim($_POST["kadi"]));
     $sifre = @md5(strip_tags(trim($_POST["sifre"])));
-    
-
     if(!$kadi || !$sifre){
         echo json_encode(array(
             "mesaj" => "Kullanıcı Adı veya sifre bos bırakılamaz",
@@ -19,20 +17,21 @@ if($_POST){
         $giris->execute();
         $row = $giris->fetch(PDO::FETCH_ASSOC);
 
-        if ($giris->rowCount()) {
+        if ($giris->rowCount()>0) {
 
-            if ($row["durum"] == 2) {
+            if ($row["user_status"] == 2) {
                 echo json_encode(array(
                     "mesaj" => "Topluluğa aykırı davranışlarınızdan dolayı engellendiniz",
                     "durum" => 0
                 ));
             }else{
 
-                $kadi = $row["kadi"];
-                $eposta = $row["eposta"];
-                $rutbe = $row["rutbe"];
-                $id = $row["id"];
+                $kadi = $row["nick"];
+                $eposta = $row["email"];
+                $resim = $row["picture"];
+                $id = $row["user_id"];
                 
+                // $tokenId=base64_encode(mcrypt_create_iv(32));
                 $secret_key="nosbirciler";
                 $issuer_claim = "nosbir.com"; // this can be the servername
                 $audience_claim = "THE_AUDIENCE";
@@ -45,20 +44,20 @@ if($_POST){
                     "iat" => $issuedat_claim,
                     "nbf" => $notbefore_claim,
                     "exp" => $expire_claim,
+                    // "jti" => $tokenId,
                     "data" => array(
                         "id" => $id,
                         "kadi"=>$kadi,
-                        "rutbe"=>$rutbe,
+                        "resim"=>$resim,
                         "mail" => $eposta
                     )
                 );
-
                 $jwt=JWT::encode($token,$secret_key);
 
                 echo json_encode(array(
-                    "mesaj"=> "Giriş Başarılı",
-                    "token" => $jwt,
-                    "suresi"=>$expire_claim 
+                    "durum" =>1,
+                    "token" =>$jwt
+                    // "suresi"=>$expire_claim 
                 ));
 
             }

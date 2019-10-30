@@ -13,7 +13,6 @@ if($_POST){
         }
 
         // TODO resim işlemleri
-        
 
         $kadi=@strip_tags(trim($_POST["kadi"]));
         $sifre=@md5(strip_tags(trim($_POST["sifre"])));
@@ -56,7 +55,7 @@ if($_POST){
             $mailtekrar->execute();
             if($mailtekrar->rowCount()){
                 echo json_encode(array(
-                    "mesaj" => "Bu eposta adresini kullanamazsınız."
+                    "mesaj" => "Bu eposta adresi zaten kullanımda."
                 ));
             }else{
 
@@ -68,7 +67,7 @@ if($_POST){
             $row=$uyetekrar->fetch(PDO::FETCH_ASSOC);
             if ($uyetekrar->rowCount()) {
                 echo json_encode(array(
-                    "mesaj" =>"Bu kullanıcı adını kullanamazsınız.",
+                    "mesaj" =>"Bu kullanıcı adı alınmış.",
                     "durum" => 0
                 ));
             }else{
@@ -102,7 +101,7 @@ if($_POST){
                     if($ekle->execute()){
                        
                         echo json_encode(array(
-                            "mesaj" => "Basarıyla Kayıt edildi.",
+                            "mesaj" => "Kayıt başarılı bilgilerinizi girerek oturum açabilirsiniz.",
                             "durum" => 1
                             
                         ));
