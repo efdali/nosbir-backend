@@ -77,8 +77,11 @@ if($row=$post->fetch(PDO::FETCH_ASSOC)){
             $yorum=$postYorum->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode(array(
-                "post" => $row,
-                // "yorum" => $yorum
+                "durum"=>1,
+                "post" => array(
+                    "data"=>$row,
+                    "yorum"=>$yorum
+                )
             ));
         }else{
             echo json_encode(array(
