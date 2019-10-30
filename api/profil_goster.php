@@ -20,7 +20,6 @@ if (isset($_GET)) {
     $limit=10;
     $offset=($sayfa-1)*$limit;
 
-
     $sorgu=$db->prepare("select p.*,u.*,sum(l.type),toplam from posts p 
                         left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                         left join likes l on l.post_id=p.post_id 
