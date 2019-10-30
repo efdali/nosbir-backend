@@ -4,7 +4,7 @@ require_once("../sistem/ayar.php");
 $sayfa=@$_GET["s"] ? @$_GET["s"] : 1;
 $limit=10;
 
-$offset=$sayfa*$limit;
+$offset=($sayfa-1)*$limit;
 
     $post_id=$_GET["post_id"];
 
