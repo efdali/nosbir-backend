@@ -12,7 +12,8 @@ class TokenDogrula
         $secret_key = "nosbirciler";
         $header = apache_request_headers(); // gelen isteğin headerı bilgilerini çektik
         $token = $header["Authorization"]; // header içinde authorization anahtarı ile gelen tokenı aldıık
-
+        $token=explode(" ",$token);
+        $token=$token[1];
         if ($token) { // eğer token varsa
             try { // token doğru gelmişse bilgiler değiştirilmemişse try çalışcak yanlışsa catch çalışcak
                 $decoded = JWT::decode($token, $secret_key, array("HS256"));

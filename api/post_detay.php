@@ -4,7 +4,7 @@
 require_once("../sistem/ayar.php");
 $link=$_GET["link"];
 $limit=10;
-$post=$db->prepare("select p.post_id,p.title,p.content,p.seo,p.user_id,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
+$post=$db->prepare("select p.post_id,p.title,p.content,p.seo,p.user_id,p.created_at,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
                     left join (select post_id,COUNT(a.post_id) as toplam from answers a where answer_status=1 GROUP BY a.post_id) a on a.post_id=p.post_id 
                     left join likes l on l.post_id=p.post_id 
                     inner join groups g on p.groups_id=g.group_id
@@ -32,12 +32,13 @@ if($post->execute()){
             $yorumSayisi->bindParam(":post_id",$postId);
             $yorumSayisi->execute();
             $sayi=$yorumSayisi->fetch(PDO::FETCH_ASSOC);
+            $sayi=ceil($sayi["COUNT(*)"]/$limit);
             echo json_encode(array(
                 "durum"=>1,
                 "post" => $row,
                 "yorum" => array(
                     "data"=>$yorum,
-                    "sayi"=>$sayi["COUNT(*)"]
+                    "sayi"=>$sayi
                 )
             ));
         }else{

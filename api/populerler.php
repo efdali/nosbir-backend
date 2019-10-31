@@ -6,11 +6,13 @@ if(isset($_GET)){
     //Tum zamanlar
     if($durum==1){
     
-        $listele=$db->prepare("select *,count(y.postId) ys from post p
-                            left join yorum y on y.postId=p.id
-                            group by p.id
+        $listele=$db->prepare("select p.title,p.seo,u.nick,u.picture,g.name,g.group_seo,count(a.post_id) ys from posts p
+                            left join answers a on a.post_id=p.post_id
+                            left join users u on u.user_id=p.user_id
+                            left join groups g on g.group_id=p.groups_id
+                            group by p.post_id
                             order by ys desc
-                            limit 10");
+                            limit 5");
         
         if($listele->execute()){
           
@@ -18,7 +20,8 @@ if(isset($_GET)){
             
             if($row){
                 echo json_encode(array(
-                    "data"=> $row
+                    "post"=> $row,
+                    "durum"=>1
                 ));
                 
             }else{

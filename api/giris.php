@@ -37,7 +37,7 @@ if(isset($_POST)){
                 $audience_claim = "THE_AUDIENCE";
                 $issuedat_claim = time(); // issued at
                 $notbefore_claim = $issuedat_claim + 10; //not before in seconds
-                $expire_claim = $issuedat_claim + 1200; // token süresi
+                $expire_claim = $issuedat_claim + 12000; // token süresi
                 $token = array(
                     "iss" => $issuer_claim,
                     "aud" => $audience_claim,
