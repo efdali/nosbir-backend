@@ -1,7 +1,7 @@
 <?php
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-if (isset($_POST)) {
+if (isset($data)) {
     $token = json_decode(TokenDogrula::dogrula()); // token doğrula fonksiyonundan dönen jsonı decode ediyoruz
     if ($token->{"durum"} == 0) { // fonsiyondan durum 0 dönmüşse token doğrulanamadı hatası verip işlemi sonlandırıyoruz
         echo json_encode(array(
@@ -14,8 +14,8 @@ if (isset($_POST)) {
     $id=$token->{"token"}->{"data"}->{"id"}; // eğer token normal geldiyse token içinden üye id yi alıyoruz
 
     
-    $icerik=strip_tags(trim($_POST["icerik"]));
-    $postId=strip_tags(trim($_POST["postId"]));
+    $icerik=strip_tags(trim($data["icerik"]));
+    $postId=strip_tags(trim($data["postId"]));
 
     if(!$icerik){
         echo json_encode(array(

@@ -1,7 +1,7 @@
 <?php
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-if (isset($_POST)) {
+if (isset($data)) {
 
     $token = json_decode(TokenDogrula::dogrula()); 
     if ($token->{"durum"} == 0) { 
@@ -14,9 +14,9 @@ if (isset($_POST)) {
 
     $id=$token->{"token"}->{"data"}->{"id"}; 
 
-    $baslik = strip_tags(trim($_POST["baslik"]));
-    echo $icerik = strip_tags(trim($_POST["icerik"]));
-    $postId = strip_tags(trim($_POST["id"]));
+    $baslik = strip_tags(trim($data["baslik"]));
+    echo $icerik = strip_tags(trim($data["icerik"]));
+    $postId = strip_tags(trim($data["id"]));
 
     // TODO gönderilen postun giriş yapan kullanıcıya ait olup olmadığını kontrol et
     // ona ait değilse yetki hatası dönder ona aitse güncelle

@@ -2,7 +2,7 @@
 require_once("../sistem/ayar.php");
 
 
-if($_POST){
+if($data){
         //uye ip bul.
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -14,9 +14,9 @@ if($_POST){
 
         // TODO resim işlemleri
 
-        $kadi=@strip_tags(trim($_POST["kadi"]));
-        $sifre=@md5(strip_tags(trim($_POST["sifre"])));
-        $eposta=strip_tags(trim($_POST["eposta"]));
+        $kadi=@strip_tags(trim($data["kadi"]));
+        $sifre=@md5(strip_tags(trim($data["sifre"])));
+        $eposta=strip_tags(trim($data["eposta"]));
 
         if(!$kadi ||  !$sifre || !$eposta ){
             echo json_encode(array(

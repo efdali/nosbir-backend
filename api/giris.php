@@ -2,9 +2,9 @@
 require_once("../sistem/ayar.php");
 require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
-if(isset($_POST)){
-    $kadi=@strip_tags(trim($_POST["kadi"]));
-    $sifre = @md5(strip_tags(trim($_POST["sifre"])));
+if(isset($data)){
+    $kadi=@strip_tags(trim($data["kadi"]));
+    $sifre = @md5(strip_tags(trim($data["sifre"])));
     if(!$kadi || !$sifre){
         echo json_encode(array(
             "mesaj" => "Kullanıcı Adı veya sifre bos bırakılamaz",

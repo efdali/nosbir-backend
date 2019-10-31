@@ -1,7 +1,7 @@
 <?php
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-if (isset($_POST)) {
+if (isset($data)) {
 
     $token = json_decode(TokenDogrula::dogrula()); 
     if ($token->{"durum"} == 0) { 
@@ -14,8 +14,8 @@ if (isset($_POST)) {
 
     $id=$token->{"token"}->{"data"}->{"id"}; 
 
-    $icerik=strip_tags(trim($_POST["icerik"]));
-    $yorumId=strip_tags(trim($_POST["id"]));
+    $icerik=strip_tags(trim($data["icerik"]));
+    $yorumId=strip_tags(trim($data["id"]));
 
     $cek=$db->prepare("select uyeId from answer where answer_id = :answer_id and user_id = :user_id");
     $cek->bindParam(":answer_id",$yorumId);

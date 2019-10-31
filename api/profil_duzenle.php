@@ -1,8 +1,9 @@
 <?php
 require_once("../sistem/ayar.php");
 require_once("../yardımcılar/token-dogrula.php");
-
-if ($_REQUEST) {
+require "../vendor/autoload.php";
+use \Firebase\JWT\JWT;
+if ($_POST) {
 
     $token = json_decode(TokenDogrula::dogrula()); 
     if ($token->{"durum"} == 0) { 
@@ -13,7 +14,7 @@ if ($_REQUEST) {
         die(); 
     }
     $id=$token->{"token"}->{"data"}->{"id"}; 
-    $kadi=strip_tags(trim($_REQUEST["kadi"]));
+    $kadi=strip_tags(trim($_POST["kadi"]));
 
     $sec=$db->prepare("select * from users where user_id= :user_id limit 1");
     $sec->bindParam(":user_id",$id);
@@ -37,8 +38,7 @@ if ($_REQUEST) {
     }else{
         $kadi=$row["kadi"];
     }
-    if($_FILES["resim"]["name"]){
-        echo "var";
+    if(isset($_FILES["resim"]["name"])){
         $boyut=1024*1024*3;
         $uzanti=explode(".",$_FILES["resim"]["name"]);
         $uzanti=$uzanti[count($uzanti)-1]; 
@@ -81,7 +81,7 @@ if ($_REQUEST) {
          }
         
     }else{
-        $yol=$row["picture"];
+        $adi=$row["picture"];
     }
 
     $guncelle=$db->prepare("update users set
@@ -91,11 +91,35 @@ if ($_REQUEST) {
 
     $guncelle->bindParam(":user_id",$id);
     $guncelle->bindParam(":nick",$kadi);
-    $guncelle->bindParam(":picture",$yol);
+    $guncelle->bindParam(":picture",$adi);
 
 
     if($guncelle->execute()){
+
+        $secret_key="nosbirciler";
+        $issuer_claim = "nosbir.com"; // this can be the servername
+        $audience_claim = "THE_AUDIENCE";
+        $issuedat_claim = time(); // issued at
+        $notbefore_claim = $issuedat_claim + 10; //not before in seconds
+        $expire_claim = $issuedat_claim + 12000; // token süresi
+        $token = array(
+            "iss" => $issuer_claim,
+            "aud" => $audience_claim,
+            "iat" => $issuedat_claim,
+            "nbf" => $notbefore_claim,
+            "exp" => $expire_claim,
+            // "jti" => $tokenId,
+            "data" => array(
+                "id" => $row["user_id"],
+                "kadi"=>$kadi,
+                "resim"=>$adi,
+                "mail" => $row["email"]
+            )
+        );
+        $jwt=JWT::encode($token,$secret_key);
+
         echo json_encode(array(
+            "token"=>$jwt,
             "mesaj" => "Profil başarıyla guncellendi.",
             "durum" => 1
         ));

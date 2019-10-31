@@ -2,7 +2,7 @@
 require_once("../sistem/ayar.php");
 require_once("../sistem/fonksiyon.php");
 require_once("../yardımcılar/token-dogrula.php");
-if (isset($_POST)) {
+if (isset($data)) {
 
     $token = json_decode(TokenDogrula::dogrula()); // token doğrula fonksiyonundan dönen jsonı decode ediyoruz
     if ($token->{"durum"} == 0) { // fonsiyondan durum 0 dönmüşse token doğrulanamadı hatası verip işlemi sonlandırıyoruz
@@ -13,9 +13,9 @@ if (isset($_POST)) {
         die(); // işlem sonlandırma bundan sonrası çalışmayacak
     }
     $id=$token->{"token"}->{"data"}->{"id"}; // eğer token normal geldiyse token içinden üye id yi alıyoruz
-    $icerik = trim($_POST["icerik"]);
-    $baslik = strip_tags(trim($_POST["baslik"]));
-    $toplulukId = strip_tags(trim($_POST["toplulukId"]));
+    $icerik = trim($data["icerik"]);
+    $baslik = strip_tags(trim($data["baslik"]));
+    $toplulukId = strip_tags(trim($data["toplulukId"]));
     $seo=seolink(strip_tags(trim($baslik)))."-".rand(0,9999999);
 
 

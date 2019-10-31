@@ -10,7 +10,7 @@ $host="localhost";
 $db="nosbir";
 $username="root";
 $pass="";
-$_POST = json_decode(file_get_contents("php://input"),true);
+$data = json_decode(file_get_contents("php://input"),true);
 
 try{
     $db=new PDO("mysql:host=$host;dbname=$db;charset=utf8",$username,$pass);
