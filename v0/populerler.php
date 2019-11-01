@@ -26,13 +26,13 @@ if(isset($_GET)){
                 
             }else{
                 echo json_encode(array(
-                    "mesaj" => "boş list",
+                    "mesaj" => "Bugün popüler nos yok.Neden senin nosun popüler olmasın.Hadi Nosla",
                     "durum" => 0
                 ));
             }
         }else{
             echo json_encode(array(
-                "mesaj" => "Tum zamanların en populer 10 postu listelenirken bir sorun oluştu.",
+                "mesaj" => "Tum zamanların en populer 10 nosu listelenirken bir sorun oluştu.",
                 "durum" => 0
             ));
             
