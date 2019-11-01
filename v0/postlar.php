@@ -10,7 +10,7 @@ if($sayfa<0){
 }
 $offset=$sayfa*$limit;
 if(!isset($_GET["topluluk"])){
-    $sorgu=$db->prepare("select p.title,p.content,p.seo,p.created_at,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
+    $sorgu=$db->prepare("select p.post_id,p.title,p.content,p.seo,p.created_at,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
                         left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                         left join likes l on l.post_id=p.post_id 
                         inner join groups g on p.groups_id=g.group_id
@@ -22,7 +22,7 @@ if(!isset($_GET["topluluk"])){
 
 }else{
     $topluluk=$_GET["topluluk"];
-    $sorgu=$db->prepare("select p.title,p.content,p.seo,p.created_at,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
+    $sorgu=$db->prepare("select p.post_id,p.title,p.content,p.seo,p.created_at,u.nick,u.picture,g.name,g.group_seo,sum(l.type) as begeni,toplam from posts p 
                         left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                         left join likes l on l.post_id=p.post_id 
                         inner join groups g on p.groups_id=g.group_id
