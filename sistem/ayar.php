@@ -8,8 +8,8 @@ header ('Content-type: text/html; charset=utf-8');
 
 $host="localhost";
 $db="nosbir";
-$username="root";
-$pass="";
+$username="nosbirEE";
+$pass="*#3156/*EE";
 $data = json_decode(file_get_contents("php://input"),true);
 
 try{

@@ -10,8 +10,8 @@ class TokenDogrula
     public static function dogrula()
     {
         $secret_key = "nosbirciler";
-        $header = apache_request_headers(); // gelen isteğin headerı bilgilerini çektik
-        $token = $header["Authorization"]; // header içinde authorization anahtarı ile gelen tokenı aldıık
+        //$header = apache_request_headers(); // gelen isteğin headerı bilgilerini çektik
+        $token = $_SERVER["HTTP_AUTHORIZATION"]; // header içinde authorization anahtarı ile gelen tokenı aldıık
         $token=explode(" ",$token);
         $token=$token[1];
         if ($token) { // eğer token varsa
