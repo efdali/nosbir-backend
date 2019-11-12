@@ -19,6 +19,7 @@ if (isset($_GET)) {
 
         $sorgu=$db->prepare("select a.text,a.created_at,u.user_id,u.nick,u.picture from answers a,users u,posts p,likes l
         where a.post_id=p.post_id and a.answer_status=1 and u.user_id=a.user_id and l.user_id=u.user_id and l.user_id=:user_id
+
         order by a.created_at desc limit $offset,$limit");
 
         $sorgu->binParam(":user_id",$kullanici["user_id"]);
