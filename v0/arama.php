@@ -46,19 +46,28 @@ if(!$topluluk){
 
 
                 
+if($arama->execute()){
+    
+    $basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);
 
+    $toplamSayfa=$db->prepare("select COUNT(*) from post");
+    $toplamSayfa->execute();
+    $toplam=$toplamSayfa->fetch(PDO::FETCH_ASSOC);
 
-
-$basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);
-
-$toplamSayfa=$db->prepare("select COUNT(*) from post");
-$toplamSayfa->execute();
-$toplam=$toplamSayfa->fetch(PDO::FETCH_ASSOC);
-
-echo json_encode(array(
+    echo json_encode(array(
     "postlar"=>$basliklar,
     "toplam"=>$toplam["COUNT(*)"]
-));
+    ));
+
+}else{
+    echo json_encode(array(
+        "mesaj" => "Postlar aranırken bir sorun oluştu",
+        "durum" => 0
+    ));
+}
+
+
+
 
 
 
