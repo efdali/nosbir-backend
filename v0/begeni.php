@@ -41,10 +41,23 @@ if (isset($data)) {
                 ));
             }
         }else{
-            echo json_encode(array(
-                "mesaj" => "Bu postu daha önce beğendin",
-                "durum" => 0
-            ));
+            $sil->$db->prepare("delete likes set type:tur where user_id=:user_id and post_id=:post_id");
+            $sil->bindParam(":user_id",$id);
+            $sil->bindParam(":post_id",$postId);
+            $sil->bindParam(":tur",$tur);
+
+            if($sil->execute()){
+                echo json_encode(array(
+                    "mesaj" => "Begeni başarıyla silindi",
+                    "durum " => 0
+                ));   
+            }else{
+                echo json_encode(array(
+                    "mesaj" => "Begeni silinirken bir sorun oluştu",
+                    "durum" => 0
+                ));
+            }
+            
         }
     }else{
         $kaydet=$db->prepare("INSERT INTO likes SET
