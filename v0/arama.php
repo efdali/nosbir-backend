@@ -14,18 +14,20 @@ $offset=($sayfa-1)*$limit;
 
 if(!$topluluk){
 
-    $arama=$db->prepare("select p.*,sum(l.type),toplam from posts p 
-                    left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
-                    left join likes l on l.post_id=p.post_id 
-                    inner join groups g on p.groups_id=g.group_id
-                    inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1 and p.title like aranan=:aranan
-                    group by p.post_id
-                    order by created_at desc
-                    limit $offset,$limit");
+    $arama=$db->prepare("select p.*,sum(l.type) toplam from posts p 
+                        left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
+                        left join likes l on l.post_id=p.post_id 
+                        inner join groups g on p.groups_id=g.group_id
+                        inner join users u on p.user_id=u.user_id where p.post_statu=1 and u.user_status=1 and p.title like aranan:aranan
+                        group by p.post_id
+                        order by created_at desc
+                        limit $offset,$limit");
+
+                        $arama->bindParam(":aranan",'%'.$aranan.'%');
 
 }else{
 
-    $arama=$db->prepare("select p.*,sum(l.type),toplam from posts p 
+    $arama=$db->prepare("select p.*,sum(l.type) as toplam from posts p 
                         left join (select post_id,COUNT(a.post_id) as toplam from answers a GROUP BY a.post_id) a on a.post_id=p.post_id 
                         left join likes l on l.post_id=p.post_id 
                         inner join groups g on p.groups_id=g.group_id
@@ -35,6 +37,7 @@ if(!$topluluk){
                         order by created_at desc
                         limit $offset,$limit");
 
+                        $arama->bindParam(":aranan",'%'.$aranan.'%');
                         $arama->bindParam(":group_id",$topluluk);
     
 }
@@ -44,7 +47,7 @@ if(!$topluluk){
 
                 
 
-$arama->bindParam(":aranan",'%'.$aranan.'%');
+
 
 $basliklar=$sorgu->fetchAll(PDO::FETCH_ASSOC);
 
